@@ -34,6 +34,16 @@ export async function setWord(word: string): Promise<number> {
   return await redis.incr(VERSION_KEY);
 }
 
+export async function clearWord(): Promise<number> {
+  if (!redis) {
+    mem.word = null;
+    mem.version += 1;
+    return mem.version;
+  }
+  await redis.del(WORD_KEY);
+  return await redis.incr(VERSION_KEY);
+}
+
 export function storageAvailable(): boolean {
   return redis !== null;
 }

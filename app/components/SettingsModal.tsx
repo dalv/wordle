@@ -32,8 +32,8 @@ export default function SettingsModal({ onClose, onSaved }: Props) {
 
   async function save() {
     setError(null);
-    if (!/^[A-Z]{5}$/.test(word)) {
-      setError('Word must be exactly 5 letters.');
+    if (word.length > 0 && !/^[A-Z]{5}$/.test(word)) {
+      setError('Word must be exactly 5 letters (or blank to clear).');
       return;
     }
     setSaving(true);
@@ -69,7 +69,7 @@ export default function SettingsModal({ onClose, onSaved }: Props) {
         </div>
         <p className="modal-desc">
           {hasExisting
-            ? 'A word is currently set. You can view and change it here. Changing it will reset everyone\u2019s game.'
+            ? 'A word is currently set. Change it, or leave it blank and save to clear the word. Either action resets everyone\u2019s game.'
             : 'Enter a 5-letter word. Anyone who visits this URL will try to guess it.'}
         </p>
         <input
@@ -90,8 +90,18 @@ export default function SettingsModal({ onClose, onSaved }: Props) {
         {error && <div className="error">{error}</div>}
         <div className="modal-actions">
           <button className="btn" onClick={onClose} disabled={saving}>Cancel</button>
-          <button className="btn primary" onClick={save} disabled={saving || !loaded}>
-            {saving ? 'Saving…' : hasExisting ? 'Update' : 'Save'}
+          <button
+            className="btn primary"
+            onClick={save}
+            disabled={saving || !loaded || (word.length === 0 && !hasExisting)}
+          >
+            {saving
+              ? 'Saving…'
+              : word.length === 0 && hasExisting
+                ? 'Clear word'
+                : hasExisting
+                  ? 'Update'
+                  : 'Save'}
           </button>
         </div>
       </div>
